@@ -22,7 +22,11 @@ func (r *postRepository) Create(ctx context.Context, post *domain.Post) error {
 
 func (r *postRepository) ListByUserID(ctx context.Context, userId string) ([]domain.Post, error) {
 	var posts []domain.Post
-	if err := r.db.WithContext(ctx).Where("user_id = ?", userId).Find(&posts).Error; err != nil {
+	if err := r.db.WithContext(ctx).
+		Where("user_id = ?", userId).
+		Find(&posts).
+		Order("created_at DESC").
+		Error; err != nil {
 		return nil, err
 	}
 	return posts, nil

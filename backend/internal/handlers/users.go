@@ -4,11 +4,8 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/google/uuid"
 	"go.uber.org/zap"
 
 	"github.com/victor-nach/postr-backend/internal/domain"
@@ -26,56 +23,6 @@ func NewUserHandler(service domain.UserService, logger *zap.Logger) *UserHandler
 		service: service,
 		logger:  logger,
 	}
-}
-
-func (h *UserHandler) CreateUser(c *gin.Context) {
-	logr := h.logger.With(zap.String("method", "CreateUser"))
-
-	var req createUserRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		logr.Error("Error binding JSON", zap.Error(err))
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
-		return
-	}
-
-	// Validate request body
-	if err := req.Validate(); err != nil {
-		if verrs, ok := err.(validation.Errors); ok {
-			logr.Error("Validation errors", zap.Any("errors", verrs))
-			c.JSON(http.StatusBadRequest, domain.ErrInvalidInput.WithFieldErrors(verrs))
-			return
-		}
-
-		logr.Error("Validation error", zap.Error(err))
-		c.JSON(http.StatusBadRequest, domain.ErrInvalidInput)
-		return
-	}
-
-	user := &domain.User{
-		ID:        uuid.New().String(),
-		Firstname: req.Firstname,
-		Lastname:  req.Lastname,
-		Email:     req.Email,
-		Street:    req.Street,
-		City:      req.City,
-		State:     req.State,
-		Zipcode:   req.Zipcode,
-		CreatedAt: time.Now(),
-	}
-
-	if err := h.service.Create(c.Request.Context(), user); err != nil {
-		c.JSON(http.StatusInternalServerError, err)
-		return
-	}
-
-	logr.Info("User created successfully", zap.Any("user", user))
-
-	resp := APIResponse{
-		Status:  successStatus,
-		Message: "Users created successfully",
-		Data:    user,
-	}
-	c.JSON(http.StatusOK, resp)
 }
 
 func (h *UserHandler) ListUsers(c *gin.Context) {

@@ -107,9 +107,18 @@ func createRouter(userHandler *handlers.UserHandler, postHandler *handlers.PostH
 	router.Use(mws.AuthMiddleware())
 	router.Use(mws.RateLimitMiddleware())
 
-	router.Use(cors.Default())
+	corsConfig := cors.Config{
+        AllowOrigins: []string{"*"},
+        AllowMethods: []string{"GET", "POST", "DELETE"},
+        AllowHeaders: []string{"Origin", "Content-Length", "Content-Type", "X-API-Key"},
+        ExposeHeaders: []string{"Content-Length"},
+        AllowCredentials: true,
+        MaxAge: 12 * time.Hour,
+    }
 
-	router.POST("/users", userHandler.CreateUser)
+    // Use the custom CORS middleware.
+    router.Use(cors.New(corsConfig))
+
 	router.GET("/users", userHandler.ListUsers)
 	router.GET("/users/count", userHandler.CountUsers)
 	router.GET("/users/:id", userHandler.GetUserByID)

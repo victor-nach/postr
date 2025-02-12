@@ -3,11 +3,9 @@ package handlers
 import (
 	"errors"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 
@@ -31,28 +29,9 @@ func NewPostHandler(service domain.PostService, logger *zap.Logger) *PostHandler
 func (h *PostHandler) CreatePost(c *gin.Context) {
 	logr := h.logger.With(zap.String("method", "CreatePost"))
 
-	var req createPostRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		logr.Error("error binding JSON", zap.Error(err))
-		c.JSON(http.StatusBadRequest, domain.ErrInvalidInput)
-		return
-	}
-
-	// Trim whitespace from the request fields
-	req.UserID = strings.TrimSpace(req.UserID)
-	req.Title = strings.TrimSpace(req.Title)
-	req.Body = strings.TrimSpace(req.Body)
-
-	// Validate request body
-	if err := req.Validate(); err != nil {
-		if verrs, ok := err.(validation.Errors); ok {
-			logr.Error("validation errors", zap.Any("errors", verrs))
-			c.JSON(http.StatusBadRequest, domain.ErrInvalidInput.WithFieldErrors(verrs))
-			return
-		}
-
-		logr.Error("validation error", zap.Error(err))
-		c.JSON(http.StatusBadRequest, domain.ErrInvalidInput)
+	req, err := h.validateCreatePost(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
 
