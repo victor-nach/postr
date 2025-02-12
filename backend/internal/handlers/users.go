@@ -3,7 +3,6 @@ package handlers
 import (
 	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -28,16 +27,13 @@ func NewUserHandler(service domain.UserService, logger *zap.Logger) *UserHandler
 func (h *UserHandler) ListUsers(c *gin.Context) {
 	logr := h.logger.With(zap.String("method", "ListUsers"))
 
-	pageNumber, err := strconv.Atoi(c.Query("pageNumber"))
+	req, err := h.validateListUsers(c)
 	if err != nil {
-		pageNumber = 1 // default
-	}
-	pageSize, err := strconv.Atoi(c.Query("pageSize"))
-	if err != nil {
-		pageSize = 10 // default
+		c.JSON(http.StatusBadRequest, err)
+		return
 	}
 
-	paginatedUsers, err := h.service.List(c.Request.Context(), pageNumber, pageSize)
+	paginatedUsers, err := h.service.List(c.Request.Context(), req.PageNumber, req.PageSize)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return
@@ -57,7 +53,12 @@ func (h *UserHandler) ListUsers(c *gin.Context) {
 func (h *UserHandler) GetUserByID(c *gin.Context) {
 	logr := h.logger.With(zap.String("method", "GetUserByID"))
 
-	id := c.Param("id")
+	id, err := h.validateGetUserByID(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
 	user, err := h.service.Get(c.Request.Context(), id)
 
 	if err != nil {

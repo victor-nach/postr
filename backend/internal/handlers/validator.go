@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -16,14 +17,6 @@ import (
 func sanitizeInput(input string) string {
 	p := bluemonday.StrictPolicy()
 	return p.Sanitize(input)
-}
-
-func (r createPostRequest) Validate() error {
-	return validation.ValidateStruct(&r,
-		validation.Field(&r.UserID, validation.Required, is.UUID),
-		validation.Field(&r.Title, validation.Required),
-		validation.Field(&r.Body, validation.Required),
-	)
 }
 
 func (h *PostHandler) validateCreatePost(c *gin.Context) (*createPostRequest, error) {
@@ -73,6 +66,55 @@ func (h *PostHandler) validateListPostsByUserID(c *gin.Context) (string, error) 
 
 func (h *PostHandler) validateDeletePost(c *gin.Context) (string, error) {
 	logr := h.logger.With(zap.String("method", "validateDeletePost"))
+
+	id := c.Param("id")
+	
+	err := validation.Validate(id, is.UUID)
+    if err != nil {
+        logr.Error("invalid userId format", zap.Error(err))
+        return "", domain.ErrInvalidInputWithStr("invalid userId format")
+    }
+
+	return id, nil
+}
+
+func (h *UserHandler) validateListUsers(c *gin.Context) (*listUsersRequest, error) {
+	pageNumber := 1
+	pageSize := 10
+
+	if pn := c.Query("pageNumber"); pn != "" {
+		if num, err := strconv.Atoi(pn); err == nil {
+			pageNumber = num
+		} else {
+			return nil, domain.ErrInvalidInputWithStr("nvalid pageNumber value")
+		}
+	}
+
+	if ps := c.Query("pageSize"); ps != "" {
+		if num, err := strconv.Atoi(ps); err == nil {
+			pageSize = num
+		} else {
+			return nil, domain.ErrInvalidInputWithStr("nvalid pageSize value")
+		}
+	}
+
+	req := listUsersRequest{
+		PageNumber: pageNumber,
+		PageSize:   pageSize,
+	}
+
+	if err := req.Validate(); err != nil {
+		if verrs, ok := err.(validation.Errors); ok {
+			return nil, domain.ErrInvalidInput.WithFieldErrors(verrs)
+		}
+		return nil, domain.ErrInvalidInputWithStr("Pagination validation failednvalid pageSize value")
+	}
+
+	return &req, nil
+}
+
+func (h *UserHandler) validateGetUserByID(c *gin.Context) (string, error) {
+	logr := h.logger.With(zap.String("method", "GetUserByID"))
 
 	id := c.Param("id")
 	
