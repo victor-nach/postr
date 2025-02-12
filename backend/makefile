@@ -5,6 +5,16 @@ build-run:
 	@echo "Running the application..."
 	./bin/api
 
+# Build the app
+build:
+	@echo "Building the application..."
+	go build -o bin/api ./cmd/app
+
+# Run the app
+start:
+	@echo "Running the application..."
+	./bin/api
+
 # Run the migrations (without seeding)
 migrate:
 	@echo "Running migrations..."

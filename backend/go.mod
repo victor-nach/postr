@@ -60,6 +60,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.18.2
 	go.uber.org/mock v0.5.0
 	go.uber.org/multierr v1.10.0 // indirect
+	golang.org/x/time v0.10.0
 	gorm.io/driver/sqlite v1.5.7
 	gorm.io/gorm v1.25.12
 	modernc.org/sqlite v1.34.5

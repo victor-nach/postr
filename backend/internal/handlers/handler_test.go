@@ -53,7 +53,7 @@ func TestPostHandler_CreatePost(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &resp)
 	require.NoError(t, err)
 	require.Equal(t, "success", resp.Status)
-	require.Equal(t, "Posts listed successfully", resp.Message)
+	require.Equal(t, "Post created successfully", resp.Message)
 
 	data, ok := resp.Data.(map[string]interface{})
 	require.True(t, ok, "expected Data to be a map")
@@ -61,6 +61,7 @@ func TestPostHandler_CreatePost(t *testing.T) {
 	require.Equal(t, "Test Title", data["title"])
 	require.Equal(t, "Test Body", data["body"])
 }
+
 
 func TestPostHandler_ListPostsByUserID(t *testing.T) {
 	ctrl := gomock.NewController(t)
@@ -70,7 +71,7 @@ func TestPostHandler_ListPostsByUserID(t *testing.T) {
 	logger := zap.NewNop()
 	handler := NewPostHandler(mockPostService, logger)
 
-	req, err := http.NewRequest("GET", "/posts/b63df572-9bd1-4a4f-9f0d-2a8155a81fde", nil)
+	req, err := http.NewRequest("GET", "/posts?userId=b63df572-9bd1-4a4f-9f0d-2a8155a81fde", nil)
 	require.NoError(t, err)
 
 	w := httptest.NewRecorder()

@@ -9,7 +9,6 @@ import (
 	"syscall"
 	"time"
 
-	
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -18,6 +17,7 @@ import (
 	"github.com/victor-nach/postr-backend/internal/handlers"
 	"github.com/victor-nach/postr-backend/internal/infrastructure/db"
 	"github.com/victor-nach/postr-backend/internal/infrastructure/repositories"
+	"github.com/victor-nach/postr-backend/internal/middlewares"
 	"github.com/victor-nach/postr-backend/internal/services/postsservice"
 	"github.com/victor-nach/postr-backend/internal/services/usersservice"
 	"github.com/victor-nach/postr-backend/pkg/logger"
@@ -58,15 +58,18 @@ func main() {
 
 	// Initialize handlers
 	userHandler := handlers.NewUserHandler(userSvc, logr)
-	postHandler := handlers.NewPostHandler(postSvc,  logr)
+	postHandler := handlers.NewPostHandler(postSvc, logr)
 
-	RunServer(cfg.Port, userHandler, postHandler, logr)
+	// Initialize middlewares
+	mws := middlewares.New(logr, cfg)
+
+	RunServer(cfg.Port, userHandler, postHandler, mws, logr)
 }
 
 // RunServer creates and mounts the router, starts the server in a goroutine,
 // and listens for OS signals to gracefully shutdown
-func RunServer(port string, userHandler *handlers.UserHandler, postHandler *handlers.PostHandler, logr *zap.Logger) {
-	router := createRouter(userHandler, postHandler)
+func RunServer(port string, userHandler *handlers.UserHandler, postHandler *handlers.PostHandler, mws *middlewares.Service, logr *zap.Logger) {
+	router := createRouter(userHandler, postHandler, mws)
 
 	srv := &http.Server{
 		Addr:    ":" + port,
@@ -99,8 +102,10 @@ func RunServer(port string, userHandler *handlers.UserHandler, postHandler *hand
 	logr.Info("Server exiting")
 }
 
-func createRouter(userHandler *handlers.UserHandler, postHandler *handlers.PostHandler) http.Handler {
+func createRouter(userHandler *handlers.UserHandler, postHandler *handlers.PostHandler, mws *middlewares.Service) http.Handler {
 	router := gin.Default()
+	router.Use(mws.AuthMiddleware())
+	router.Use(mws.RateLimitMiddleware())
 
 	router.Use(cors.Default())
 
@@ -111,7 +116,11 @@ func createRouter(userHandler *handlers.UserHandler, postHandler *handlers.PostH
 
 	router.POST("/posts", postHandler.CreatePost)
 	router.DELETE("/posts/:id", postHandler.DeletePost)
-	router.GET("/posts/:userId", postHandler.ListPostsByUserID)
+	router.GET("/posts", postHandler.ListPostsByUserID)
+
+	router.GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "Welcome to postr api")
+	})
 
 	return router
 }

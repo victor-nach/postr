@@ -33,7 +33,7 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 
 	var req createPostRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		logr.Error("Error binding JSON", zap.Error(err))
+		logr.Error("error binding JSON", zap.Error(err))
 		c.JSON(http.StatusBadRequest, domain.ErrInvalidInput)
 		return
 	}
@@ -46,12 +46,12 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 	// Validate request body
 	if err := req.Validate(); err != nil {
 		if verrs, ok := err.(validation.Errors); ok {
-			logr.Error("Validation errors", zap.Any("errors", verrs))
+			logr.Error("validation errors", zap.Any("errors", verrs))
 			c.JSON(http.StatusBadRequest, domain.ErrInvalidInput.WithFieldErrors(verrs))
 			return
 		}
 
-		logr.Error("Validation error", zap.Error(err))
+		logr.Error("validation error", zap.Error(err))
 		c.JSON(http.StatusBadRequest, domain.ErrInvalidInput)
 		return
 	}
@@ -78,7 +78,7 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 
 	resp := APIResponse{
 		Status:  successStatus,
-		Message: "Posts listed successfully",
+		Message: "Post created successfully",
 		Data:    post,
 	}
 	c.JSON(http.StatusOK, resp)
@@ -87,9 +87,9 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 func (h *PostHandler) ListPostsByUserID(c *gin.Context) {
 	logr := h.logger.With(zap.String("method", "ListPostsByUserID"))
 
-	userId := c.Param("userId")
+	userId := c.Query("userId")
 	if userId == "" {
-		h.logger.Error("Missing userId path parameter")
+		h.logger.Error("missing userId path parameter")
 		c.JSON(http.StatusBadRequest, domain.ErrInvalidInput)
 		return
 	}
@@ -116,7 +116,7 @@ func (h *PostHandler) ListPostsByUserID(c *gin.Context) {
 }
 
 func (h *PostHandler) DeletePost(c *gin.Context) {
-	logr := h.logger.With(zap.String("method", "ListPostsByUserID"))
+	logr := h.logger.With(zap.String("method", "DeletePost"))
 
 	id := c.Param("id")
 	if err := h.service.Delete(c.Request.Context(), id); err != nil {
@@ -127,7 +127,6 @@ func (h *PostHandler) DeletePost(c *gin.Context) {
 
 		c.JSON(http.StatusInternalServerError, err)
 		return
-
 	}
 
 	logr.Info("Post deleted successfully", zap.String("id", id))

@@ -74,4 +74,22 @@ var (
 		Code:    "USR-400101",
 		Message: "Failed to create user",
 	}
+
+	ErrMissingAPIKey = DomainError{
+        Status:  errorStatus,
+        Code:    "API-401001",
+        Message: "Missing API key",
+    }
+
+    ErrInvalidAPIKey = DomainError{
+        Status:  errorStatus,
+        Code:    "API-401002",
+        Message: "Invalid API key",
+    }
+
+    ErrTooManyRequests = DomainError{
+        Status:  errorStatus,
+        Code:    "APP-429001",
+        Message: "Too many requests",
+    }
 )
