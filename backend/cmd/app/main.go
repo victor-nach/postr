@@ -109,10 +109,9 @@ func createRouter(userHandler *handlers.UserHandler, postHandler *handlers.PostH
 
 	corsConfig := cors.Config{
         AllowOrigins: []string{"*"},
-        AllowMethods: []string{"GET", "POST", "DELETE"},
+        AllowMethods: []string{"GET", "POST", "DELETE", "OPTIONS"},
         AllowHeaders: []string{"Origin", "Content-Length", "Content-Type", "X-API-Key"},
         ExposeHeaders: []string{"Content-Length"},
-        AllowCredentials: true,
         MaxAge: 12 * time.Hour,
     }
 
