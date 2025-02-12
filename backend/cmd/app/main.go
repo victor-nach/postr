@@ -69,7 +69,7 @@ func main() {
 // RunServer creates and mounts the router, starts the server in a goroutine,
 // and listens for OS signals to gracefully shutdown
 func RunServer(cfg *config.Config, userHandler *handlers.UserHandler, postHandler *handlers.PostHandler, mws *middlewares.Service, logr *zap.Logger) {
-	router := createRouter(cfg, userHandler, postHandler, mws)
+	router := createRouter(userHandler, postHandler, mws)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,
@@ -102,23 +102,19 @@ func RunServer(cfg *config.Config, userHandler *handlers.UserHandler, postHandle
 	logr.Info("Server exiting")
 }
 
-func createRouter(cfg *config.Config, userHandler *handlers.UserHandler, postHandler *handlers.PostHandler, mws *middlewares.Service) http.Handler {
+func createRouter(userHandler *handlers.UserHandler, postHandler *handlers.PostHandler, mws *middlewares.Service) http.Handler {
 	router := gin.Default()
 	router.Use(mws.AuthMiddleware())
 	router.Use(mws.RateLimitMiddleware())
-	
-	// if cfg.AppEnv == config.DevEnv {
-	// 	router.Use(cors.Default())
-	// } else {
-		corsConfig := cors.Config{
-			AllowOrigins: []string{"*"},
-			AllowMethods: []string{"GET", "POST", "DELETE", "OPTIONS"},
-			AllowHeaders: []string{"Origin", "Content-Length", "Content-Type", "X-API-Key"},
-			ExposeHeaders: []string{"Content-Length"},
-			MaxAge: 12 * time.Hour,
-		}
-		router.Use(cors.New(corsConfig))
-	// }
+
+	corsConfig := cors.Config{
+		AllowOrigins:  []string{"*"},
+		AllowMethods:  []string{"GET", "POST", "DELETE", "OPTIONS"},
+		AllowHeaders:  []string{"Origin", "Content-Length", "Content-Type", "X-API-Key"},
+		ExposeHeaders: []string{"Content-Length"},
+		MaxAge:        12 * time.Hour,
+	}
+	router.Use(cors.New(corsConfig))
 
 	router.GET("/users", userHandler.ListUsers)
 	router.GET("/users/count", userHandler.CountUsers)

@@ -29,7 +29,7 @@ export const fetchUsers = async (
 
 export const fetchUserPosts = async (userID: string) => {
   const response = await fetch(
-    `https://postr-yzs7.onrender.com/posts?${userID}`,
+    `https://postr-yzs7.onrender.com/posts?userId=${userID}`,
     {
       headers: {
         "X-API-Key": API_KEY,
