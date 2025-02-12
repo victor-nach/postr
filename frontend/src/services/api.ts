@@ -7,7 +7,7 @@ export const fetchUsers = async (
   pageNumber: number
 ): Promise<{ users: UserProp[]; currentPage: number; totalPages: number }> => {
   const response = await fetch(
-    `https://postr-backend-n9s0.onrender.com/users?pageNumber=${pageNumber}&pageSize=4`,
+    `https://postr-yzs7.onrender.com/users?pageNumber=${pageNumber}&pageSize=4`,
     {
       headers: {
         "X-API-Key": API_KEY, 
@@ -29,7 +29,7 @@ export const fetchUsers = async (
 
 export const fetchUserPosts = async (userID: string) => {
   const response = await fetch(
-    `https://postr-backend-n9s0.onrender.com/posts?${userID}`,
+    `https://postr-yzs7.onrender.com/posts?${userID}`,
     {
       headers: {
         "X-API-Key": API_KEY,
@@ -46,7 +46,7 @@ export const fetchUserPosts = async (userID: string) => {
 
 export const fetchUser = async (userID: string) => {
   const response = await fetch(
-    `https://postr-backend-n9s0.onrender.com/users/${userID}`,
+    `https://postr-yzs7.onrender.com/users/${userID}`,
     {
       headers: {
         "X-API-Key": API_KEY, 
@@ -63,7 +63,7 @@ export const fetchUser = async (userID: string) => {
 
 export const deletePost = async (postID: string) => {
   const response = await fetch(
-    `https://postr-backend-n9s0.onrender.com/posts/${postID}`,
+    `https://postr-yzs7.onrender.com/posts/${postID}`,
     {
       method: "DELETE",
       headers: {
@@ -85,7 +85,7 @@ export const createPost = async (
   body: string
 ) => {
   const response = await fetch(
-    "https://postr-backend-n9s0.onrender.com/posts",
+    "https://postr-yzs7.onrender.com/posts",
     {
       method: "POST",
       headers: {

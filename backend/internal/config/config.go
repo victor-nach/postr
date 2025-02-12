@@ -19,7 +19,7 @@ const (
 
 	// Default values
 	DefaultPort         = "8080"
-	DefaultAppEnv       = "production"
+	DefaultAppEnv       = "development"
 	DefaultRateLimitEnv = "5"
 
 	// APP envs

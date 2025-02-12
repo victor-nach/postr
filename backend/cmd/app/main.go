@@ -63,16 +63,16 @@ func main() {
 	// Initialize middlewares
 	mws := middlewares.New(logr, cfg)
 
-	RunServer(cfg.Port, userHandler, postHandler, mws, logr)
+	RunServer(cfg, userHandler, postHandler, mws, logr)
 }
 
 // RunServer creates and mounts the router, starts the server in a goroutine,
 // and listens for OS signals to gracefully shutdown
-func RunServer(port string, userHandler *handlers.UserHandler, postHandler *handlers.PostHandler, mws *middlewares.Service, logr *zap.Logger) {
-	router := createRouter(userHandler, postHandler, mws)
+func RunServer(cfg *config.Config, userHandler *handlers.UserHandler, postHandler *handlers.PostHandler, mws *middlewares.Service, logr *zap.Logger) {
+	router := createRouter(cfg, userHandler, postHandler, mws)
 
 	srv := &http.Server{
-		Addr:    ":" + port,
+		Addr:    ":" + cfg.Port,
 		Handler: router,
 	}
 
@@ -102,21 +102,23 @@ func RunServer(port string, userHandler *handlers.UserHandler, postHandler *hand
 	logr.Info("Server exiting")
 }
 
-func createRouter(userHandler *handlers.UserHandler, postHandler *handlers.PostHandler, mws *middlewares.Service) http.Handler {
+func createRouter(cfg *config.Config, userHandler *handlers.UserHandler, postHandler *handlers.PostHandler, mws *middlewares.Service) http.Handler {
 	router := gin.Default()
 	router.Use(mws.AuthMiddleware())
 	router.Use(mws.RateLimitMiddleware())
-
-	corsConfig := cors.Config{
-        AllowOrigins: []string{"*"},
-        AllowMethods: []string{"GET", "POST", "DELETE", "OPTIONS"},
-        AllowHeaders: []string{"Origin", "Content-Length", "Content-Type", "X-API-Key"},
-        ExposeHeaders: []string{"Content-Length"},
-        MaxAge: 12 * time.Hour,
-    }
-
-    // Use the custom CORS middleware.
-    router.Use(cors.New(corsConfig))
+	
+	// if cfg.AppEnv == config.DevEnv {
+	// 	router.Use(cors.Default())
+	// } else {
+		corsConfig := cors.Config{
+			AllowOrigins: []string{"*"},
+			AllowMethods: []string{"GET", "POST", "DELETE", "OPTIONS"},
+			AllowHeaders: []string{"Origin", "Content-Length", "Content-Type", "X-API-Key"},
+			ExposeHeaders: []string{"Content-Length"},
+			MaxAge: 12 * time.Hour,
+		}
+		router.Use(cors.New(corsConfig))
+	// }
 
 	router.GET("/users", userHandler.ListUsers)
 	router.GET("/users/count", userHandler.CountUsers)
