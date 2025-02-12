@@ -94,6 +94,7 @@ function Post() {
               )}
               {data?.map((post: PostProps, index: number) => (
                 <PostCard
+                  userID={userID ?? ""}
                   id={post.id ?? ""}
                   title={post.title}
                   content={post.body}

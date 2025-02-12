@@ -27,10 +27,11 @@ func (r createPostRequest) Validate() error {
 }
 
 func (h *PostHandler) validateCreatePost(c *gin.Context) (*createPostRequest, error) {
+	logr := h.logger.With(zap.String("method", "validateCreatePost"))
 	var req createPostRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		h.logger.Error("Error binding JSON", zap.Error(err))
+		logr.Error("Error binding JSON", zap.Error(err))
 		return nil, domain.ErrInvalidInput
 	}
 
@@ -40,13 +41,46 @@ func (h *PostHandler) validateCreatePost(c *gin.Context) (*createPostRequest, er
 
 	if err := req.Validate(); err != nil {
 		if verrs, ok := err.(validation.Errors); ok {
-			h.logger.Error("Validation errors", zap.Any("errors", verrs))
+			logr.Error("Validation errors", zap.Any("errors", verrs))
 			return nil, domain.ErrInvalidInput.WithFieldErrors(verrs)
 		}
 
-		h.logger.Error("Validation error", zap.Error(err))
+		logr.Error("Validation error", zap.Error(err))
 		return nil, domain.ErrInvalidInput
 	}
 
 	return &req, nil
+}
+
+func (h *PostHandler) validateListPostsByUserID(c *gin.Context) (string, error) {
+	logr := h.logger.With(zap.String("method", "validateListPostsByUserID"))
+
+	userId := c.Query("userId")
+	if userId == "" {
+		logr.Error("missing userId query parameter")
+		return "", domain.ErrInvalidInputWithStr("missing userId query parameter")
+		
+	}
+
+	err := validation.Validate(userId, is.UUID)
+    if err != nil {
+        logr.Error("invalid userId format", zap.Error(err))
+        return "", domain.ErrInvalidInputWithStr("invalid userId format")
+    }
+
+	return userId, nil
+}
+
+func (h *PostHandler) validateDeletePost(c *gin.Context) (string, error) {
+	logr := h.logger.With(zap.String("method", "validateDeletePost"))
+
+	id := c.Param("id")
+	
+	err := validation.Validate(id, is.UUID)
+    if err != nil {
+        logr.Error("invalid userId format", zap.Error(err))
+        return "", domain.ErrInvalidInputWithStr("invalid userId format")
+    }
+
+	return id, nil
 }

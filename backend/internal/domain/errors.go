@@ -93,3 +93,9 @@ var (
         Message: "Too many requests",
     }
 )
+
+func ErrInvalidInputWithStr(message string) DomainError {
+	err := ErrInvalidInput
+	err.Message = fmt.Sprintf("%s: %s", err.Message, message)
+	return err
+}

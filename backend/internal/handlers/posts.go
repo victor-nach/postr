@@ -66,10 +66,9 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 func (h *PostHandler) ListPostsByUserID(c *gin.Context) {
 	logr := h.logger.With(zap.String("method", "ListPostsByUserID"))
 
-	userId := c.Query("userId")
-	if userId == "" {
-		h.logger.Error("missing userId path parameter")
-		c.JSON(http.StatusBadRequest, domain.ErrInvalidInput)
+	userId, err := h.validateListPostsByUserID(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
 
@@ -97,7 +96,11 @@ func (h *PostHandler) ListPostsByUserID(c *gin.Context) {
 func (h *PostHandler) DeletePost(c *gin.Context) {
 	logr := h.logger.With(zap.String("method", "DeletePost"))
 
-	id := c.Param("id")
+	id, err := h.validateDeletePost(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
 	if err := h.service.Delete(c.Request.Context(), id); err != nil {
 		if errors.Is(err, domain.ErrPostNotFound) {
 			c.JSON(http.StatusNotFound, err)

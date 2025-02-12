@@ -12,30 +12,52 @@ export default function Pagination({
   const handlePrev = () => {
     if (currentPage > 1) setPage(currentPage - 1);
   };
+
   const handleNext = () => {
     if (currentPage < totalPages) setPage(currentPage + 1);
   };
+
   const handleCurrent = (pageNum: number) => setPage(pageNum);
 
-  const maxPagesToShow = 10;
-  const startPage =
-    Math.floor((currentPage - 1) / maxPagesToShow) * maxPagesToShow + 1;
-  const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages);
+  const generatePages = () => {
+    if (totalPages <= 6) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
 
-  // Generate the page numbers to display
-  const pages = Array.from(
-    { length: endPage - startPage + 1 },
-    (_, i) => startPage + i
-  );
-  console.log(totalPages, "p");
+    const pages = [];
+    pages.push(1);
+
+    if (currentPage <= 4) {
+      pages.push(2, 3, 4);
+      if (totalPages > 5) pages.push("...");
+      pages.push(totalPages - 2, totalPages - 1, totalPages);
+    } else if (currentPage >= totalPages - 3) {
+      pages.push("...");
+      pages.push(totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+    } else {
+      pages.push("...");
+      pages.push(currentPage - 1, currentPage, currentPage + 1);
+      pages.push("...");
+      pages.push(totalPages - 1, totalPages);
+    }
+
+    return pages;
+  };
+
+  const pages = generatePages();
 
   return (
-    <nav aria-label="Page navigation" className="flex w-full justify-end">
-      <ul className="flex w-full justify-end">
+    <nav
+      aria-label="Page navigation"
+      className="flex w-full max-w-[856px] justify-end"
+    >
+      <ul className="flex w-full justify-end flex-wrap md:flex-nowrap">
         <li className="flex">
           <button
             onClick={handlePrev}
-            className={`flex gap-1 sm:gap-3 font-semibold items-center cursor-pointer py-[10px] pe-[42px] hover:bg-[#F9F5FF]  hover:rounded-lg ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`flex gap-1 sm:gap-3 font-semibold items-center cursor-pointer py-[10px] pe-[42px] hover:bg-[#F9F5FF]  hover:rounded-lg ${
+              currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             <svg
               width="20"
@@ -52,28 +74,34 @@ export default function Pagination({
                 strokeLinejoin="round"
               />
             </svg>
-
             <span className="text-sm leading-[20px] font-semibold text-[#535862]">
               Previous
             </span>
           </button>
         </li>
-
-        {pages.map((pageNum) => (
-          <li key={pageNum} className="flex">
-            <button
-              onClick={() => handleCurrent(pageNum)}
-              className={`w-[40px] h-[40px] flex gap-1 sm:gap-2 font-semibold items-center justify-center cursor-pointer ${
-                pageNum === currentPage ? "bg-[#F9F5FF] rounded-lg" : null
-              } hover:bg-[#F9F5FF]  hover:rounded-lg`}
-            >
-              <span className="text-sm leading-[20px] font-semibold text-[#717680]">
-                {pageNum}
-              </span>
-            </button>
-          </li>
-        ))}
-
+        {pages.map((page) => {
+          if (page === "...") {
+            return (
+              <li key="ellipsis" className="flex items-center justify-center">
+                <span className="text-[#717680] px-2">…</span>
+              </li>
+            );
+          }
+          return (
+            <li key={page} className="flex">
+              <button
+                onClick={() => handleCurrent(page as number)}
+                className={`w-[40px] h-[40px] flex gap-1 sm:gap-2 font-semibold items-center justify-center cursor-pointer ${
+                  page === currentPage ? "bg-[#F9F5FF] rounded-lg" : ""
+                } hover:bg-[#F9F5FF] hover:rounded-lg`}
+              >
+                <span className="text-sm leading-[20px] font-semibold text-[#717680]">
+                  {page}
+                </span>
+              </button>
+            </li>
+          );
+        })}
         <li className="flex">
           <button
             onClick={handleNext}
@@ -104,18 +132,4 @@ export default function Pagination({
       </ul>
     </nav>
   );
-}
-
-{
-  /* <div class="flex">
-  <!-- Previous Button -->
-  <a href="#" class="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-    Previous
-  </a>
-
-  <!-- Next Button -->
-  <a href="#" class="flex items-center justify-center px-3 h-8 ms-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-    Next
-  </a>
-</div> */
 }

@@ -64,7 +64,8 @@ export default function Modal({
                 name="title"
                 value={title}
                 placeholder="Give your post a title"
-                className="border border-[#E2E8F0] rounded-lg p-2 mt-1 w-full text-sm font-normal leading-[21px] placeholder:text-sm placeholder:leading-[21px] placeholder:font-normal px-3"
+                maxLength={100}
+                className="break-words border border-[#E2E8F0] rounded-lg p-2 mt-1 w-full text-sm font-normal leading-[21px] placeholder:text-sm placeholder:leading-[21px] placeholder:font-normal px-3"
               />
             </label>
           </div>
@@ -77,8 +78,9 @@ export default function Modal({
               <textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
+                maxLength={500}
                 placeholder="Write something mind-blowing"
-                className="border border-[#E2E8F0] rounded-lg p-2 mt-1 w-full h-32 font-normal leading-[21px] text-sm placeholder:text-sm placeholder:leading-[21px] placeholder:font-normal px-3"
+                className="break-words border border-[#E2E8F0] rounded-lg p-2 mt-1 w-full h-32 font-normal leading-[21px] text-sm placeholder:text-sm placeholder:leading-[21px] placeholder:font-normal px-3"
               ></textarea>
             </label>
           </div>
