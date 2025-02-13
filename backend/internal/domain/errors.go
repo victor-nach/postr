@@ -69,12 +69,6 @@ var (
 		Message: "Post not found",
 	}
 
-	ErrCreateUser = DomainError{
-		Status:  errorStatus,
-		Code:    "USR-400101",
-		Message: "Failed to create user",
-	}
-
 	ErrMissingAPIKey = DomainError{
         Status:  errorStatus,
         Code:    "API-401001",

@@ -41,7 +41,6 @@ func Migrate(db *sql.DB, migrationsPath string) error {
 
 // Seed seeds the db
 func Seed(db *gorm.DB) error {
-	// Read seed users and Insert
 	users, err := readUsersFromJSON("seeds/users.json")
 	if err != nil {
 		return fmt.Errorf("failed to read users from JSON: %w", err)
@@ -51,7 +50,6 @@ func Seed(db *gorm.DB) error {
 		return fmt.Errorf("failed to insert users: %w", err)
 	}
 
-	// Read seed posts and Insert
 	posts, err := readPostsFromJSON("seeds/posts.json")
 	if err != nil {
 		return fmt.Errorf("failed to read posts from JSON: %w", err)

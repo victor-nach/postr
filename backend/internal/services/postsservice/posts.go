@@ -44,7 +44,6 @@ type usersRepo interface {
 func (h *service) Create(ctx context.Context, post *domain.Post) error {
 	logr := h.logger.With(zap.String("method", "Create"))
 
-	// Validate userID
 	if err := h.validateUserID(ctx, post.UserID); err != nil {
 		logr.Error("Invalid userID", zap.Error(err))
 		return domain.ErrUserNotFound
@@ -63,7 +62,6 @@ func (h *service) Create(ctx context.Context, post *domain.Post) error {
 func (h *service) List(ctx context.Context, userID string) ([]domain.Post, error) {
 	logr := h.logger.With(zap.String("method", "List"))
 	
-	// Validate userID
 	if err := h.validateUserID(ctx, userID); err != nil {
 		logr.Error("Invalid userID", zap.Error(err))
 		return []domain.Post{}, err

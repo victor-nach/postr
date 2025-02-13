@@ -112,5 +112,5 @@ func (h *PostHandler) DeletePost(c *gin.Context) {
 	}
 
 	logr.Info("Post deleted successfully", zap.String("id", id))
-	c.Status(http.StatusNoContent)
+	c.JSON(http.StatusNoContent, nil)
 }

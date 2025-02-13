@@ -43,7 +43,7 @@ func (r listUsersRequest) Validate() error {
 func (r createPostRequest) Validate() error {
 	return validation.ValidateStruct(&r,
 		validation.Field(&r.UserID, validation.Required, is.UUID),
-		validation.Field(&r.Title, validation.Required),
-		validation.Field(&r.Body, validation.Required),
+		validation.Field(&r.Title, validation.Required, validation.Length(1, 255)),
+		validation.Field(&r.Body, validation.Required, validation.Length(1, 2000)),
 	)
 }

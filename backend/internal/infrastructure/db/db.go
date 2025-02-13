@@ -28,7 +28,6 @@ func New() (*gorm.DB, *sql.DB, error) {
         return nil, nil, fmt.Errorf("failed to ping db: %w", err)
     }
 
-    // Configure connection pool settings
     sqlDB.SetMaxOpenConns(2)
     sqlDB.SetMaxIdleConns(2)
     sqlDB.SetConnMaxLifetime(time.Hour)
@@ -39,7 +38,6 @@ func New() (*gorm.DB, *sql.DB, error) {
         return nil, nil, fmt.Errorf("failed to open gorm db: %w", err)
     }
 
-    // Apply latest migrations
     if err := migrator.Migrate(sqlDB, "file://migrations"); err != nil {
         return nil, nil, fmt.Errorf("failed to apply latest migrations: %w", err)
     }

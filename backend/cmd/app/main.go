@@ -35,32 +35,26 @@ func main() {
 	}
 	defer logr.Sync()
 
-	//  Load config
 	cfg, err := config.Load(logr)
 	if err != nil {
 		logr.Fatal("failed to load configuration", zap.Error(err))
 	}
 
-	// Initialize DB
 	gormDB, sqlDB, err := db.New()
 	if err != nil {
 		logr.Fatal("failed to connect to database", zap.Error(err))
 	}
 	defer sqlDB.Close()
 
-	// Initialize repos
 	userRepo := repositories.NewUserRepository(gormDB)
 	postRepo := repositories.NewPostRepository(gormDB)
 
-	// Initialize services
 	userSvc := usersservice.New(userRepo, logr)
 	postSvc := postsservice.New(postRepo, userRepo, logr)
 
-	// Initialize handlers
 	userHandler := handlers.NewUserHandler(userSvc, logr)
 	postHandler := handlers.NewPostHandler(postSvc, logr)
 
-	// Initialize middlewares
 	mws := middlewares.New(logr, cfg)
 
 	RunServer(cfg, userHandler, postHandler, mws, logr)
@@ -76,7 +70,6 @@ func RunServer(cfg *config.Config, userHandler *handlers.UserHandler, postHandle
 		Handler: router,
 	}
 
-	// Run the server in a goroutine
 	go func() {
 		logr.Info("Starting server", zap.String("address", srv.Addr))
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -84,7 +77,6 @@ func RunServer(cfg *config.Config, userHandler *handlers.UserHandler, postHandle
 		}
 	}()
 
-	// Create a channel to listen for OS quit signals
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 

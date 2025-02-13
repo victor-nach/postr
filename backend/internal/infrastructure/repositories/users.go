@@ -41,12 +41,10 @@ func (r *userRepository) List(ctx context.Context, pageNumber int, pageSize int)
 	var users []domain.User
 	var total int64
 
-	// Get total count of users
 	if err := r.db.WithContext(ctx).Model(&domain.User{}).Count(&total).Error; err != nil {
 		return domain.PaginatedUsers{}, err
 	}
 
-	// Get paginated records
 	offset := (pageNumber - 1) * pageSize
 	if err := r.db.WithContext(ctx).
 		Order("created_at DESC").

@@ -28,7 +28,6 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	// Open an in-memory SQLite database
 	var err error
 	sqlDB, err = sql.Open("sqlite", ":memory:")
 	if err != nil {
@@ -40,7 +39,6 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Failed to initialize GORM: %v", err)
 	}
 
-	// Apply migrations using gorm automigrate
 	if err := db.AutoMigrate(&domain.User{}, &domain.Post{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
@@ -48,7 +46,6 @@ func TestMain(m *testing.M) {
 	postsrepo = NewPostRepository(db)
 	usersrepo = NewUserRepository(db)
 
-	// Run the tests
 	code := m.Run()
 
 	sqlDB.Close()

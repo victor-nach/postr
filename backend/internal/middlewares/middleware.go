@@ -34,7 +34,6 @@ func New(logger *zap.Logger, cfg *config.Config) *Service {
 // AuthMiddleware checks for the X-API-Key header against valid keys
 func (m *Service) AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// skip checks for dev environment
 		if m.config.AppEnv == config.DevEnv {
 			m.logger.Info("skipping API key check in development mode")
 			c.Set(UserIDKey, "dev-user")
@@ -50,7 +49,6 @@ func (m *Service) AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Validate the provided key
 		var userID string
 		authorized := false
 		for id, keyValue := range m.config.APIKeys {
@@ -78,7 +76,6 @@ func (m *Service) AuthMiddleware() gin.HandlerFunc {
 // RateLimitMiddleware applies a per-user rate limit based on the userID from the context
 func (m *Service) RateLimitMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Get the userID from the context
 		userID, exists := c.Get(UserIDKey)
 		if !exists {
 			m.logger.Warn("user_id not found in context for rate limiting")
@@ -88,7 +85,6 @@ func (m *Service) RateLimitMiddleware() gin.HandlerFunc {
 
 		limiter := m.getLimiter(userID.(string))
 		if !limiter.Allow() {
-			// Rate limit exceeded
 			m.logger.Warn("rate limit exceeded", zap.String("user_id", userID.(string)))
 			c.JSON(http.StatusTooManyRequests, domain.ErrTooManyRequests)
 			c.Abort()

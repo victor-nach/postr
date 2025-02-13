@@ -68,13 +68,13 @@ function Users() {
                   className="border-b border-[#E9EAEB] last:border-0 cursor-pointer"
                   onClick={() => handlePostClick(user.id)}
                 >
-                  <td className="font-medium px-6 py-[26px] overflow-auto whitespace-nowrap text-ellipsis">
+                  <td className="font-medium px-6 py-[26px] truncate">
                     {user.firstname} {user.lastname}
                   </td>
-                  <td className="font-normal px-6 py-[26px] overflow-auto text-ellipsis whitespace-nowrap">
+                  <td className="font-normal px-6 py-[26px] truncate">
                     {user.email}
                   </td>
-                  <td className="px-6 py-[26px] w-full max-w-[392px] overflow-hidden text-ellipsis whitespace-nowrap">
+                  <td className="px-6 py-[26px] w-full max-w-[392px] truncate">
                       {user.street}, {user.state}, {user.city}, {user.zipcode}
                   </td>
                 </tr>

@@ -38,7 +38,6 @@ type Config struct {
 // Load reads configuration from the environment and loads the .env file in the project root if available
 // Sets default values if applicable
 func Load(logger *zap.Logger) (*Config, error) {
-	// Load environment variables from .env if available.
 	err := godotenv.Load()
 	if err != nil {
 		logger.Warn("error loading .env file, using default values")
