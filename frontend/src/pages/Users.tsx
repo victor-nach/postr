@@ -28,13 +28,13 @@ function Users() {
         <table className="w-full">
           <thead className="text-left text-[#535862]">
             <tr>
-              <th className="text-xs leading-[18px] px-4 md:px-6 font-medium">
+              <th className="text-xs leading-[18px] px-6 font-medium">
                 Full Name
               </th>
-              <th className="text-xs leading-[18px] md:px-6 py-3 font-medium">
+              <th className="text-xs leading-[18px] px-6 py-3 font-medium">
                 Email Address
               </th>
-              <th className="text-xs leading-[18px] md:px-6 py-3 font-medium w-[392px]">
+              <th className="text-xs leading-[18px] px-6 py-3 font-medium w-[392px]">
                 Address
               </th>
             </tr>
@@ -68,13 +68,13 @@ function Users() {
                   className="border-b border-[#E9EAEB] last:border-0 cursor-pointer"
                   onClick={() => handlePostClick(user.id)}
                 >
-                  <td className="font-medium px-6 py-[26px] truncate">
+                  <td className="px-6 py-[26px] w-[124px] max-w-[124px] md:w-[200px] md:max-w-[200px] truncate">
                     {user.firstname} {user.lastname}
                   </td>
-                  <td className="font-normal px-6 py-[26px] truncate">
+                  <td className="px-6 py-[26px] w-[124px] max-w-[124px] md:w-[264px] md:max-w-[264px] truncate">
                     {user.email}
                   </td>
-                  <td className="px-6 py-[26px] w-full max-w-[392px] truncate">
+                  <td className="px-6 py-[26px] w-[392px] max-w-[392px] truncate">
                       {user.street}, {user.state}, {user.city}, {user.zipcode}
                   </td>
                 </tr>
