@@ -49,7 +49,7 @@ export default function Pagination({
   return (
     <nav
       aria-label="Page navigation"
-      className="flex w-full max-w-[856px] justify-end"
+      className="flex w-full max-w-[523px] justify-end"
     >
       <ul className="flex w-full justify-end flex-wrap md:flex-nowrap">
         <li className="flex">

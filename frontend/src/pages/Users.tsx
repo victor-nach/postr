@@ -7,7 +7,6 @@ import LoadingEllipsis from "../components/loadingEllipsis";
 import { useNavigate } from "react-router";
 
 function Users() {
-
   const [page, setPage] = useState<number>(1);
   const navigate = useNavigate();
 
@@ -18,9 +17,8 @@ function Users() {
   });
 
   const handlePostClick = (userID: string) => {
-     void navigate(`/users/${userID}/posts`);
+    void navigate(`/users/${userID}/posts`);
   };
-
 
   return (
     <Layout title="Users">
@@ -54,8 +52,7 @@ function Users() {
                 <td colSpan={3} className="px-6 py-6 text-center">
                   <p>
                     {error.message ||
-                      "Failed to fetch data. Please try again later"}
-                    .
+                      "Failed to fetch data. Please try again later"}.
                   </p>
                 </td>
               </tr>
@@ -68,14 +65,14 @@ function Users() {
                   className="border-b border-[#E9EAEB] last:border-0 cursor-pointer"
                   onClick={() => handlePostClick(user.id)}
                 >
-                  <td className="px-6 py-[26px] w-[124px] max-w-[124px] md:w-[200px] md:max-w-[200px] truncate">
+                  <td className="px-6 py-[26px] w-[124px] max-w-[124px] md:w-[200px] md:max-w-[200px] truncate text-[14px] font-medium">
                     {user.firstname} {user.lastname}
                   </td>
-                  <td className="px-6 py-[26px] w-[124px] max-w-[124px] md:w-[264px] md:max-w-[264px] truncate">
+                  <td className="px-6 py-[26px] w-[124px] max-w-[124px] md:w-[264px] md:max-w-[264px] truncate text-[14px] font-normal">
                     {user.email}
                   </td>
-                  <td className="px-6 py-[26px] w-[392px] max-w-[392px] truncate">
-                      {user.street}, {user.state}, {user.city}, {user.zipcode}
+                  <td className="px-6 py-[26px] w-[392px] max-w-[392px] truncate text-[14px] font-normal">
+                    {user.street}, {user.state}, {user.city}, {user.zipcode}
                   </td>
                 </tr>
               ))}
@@ -83,11 +80,13 @@ function Users() {
           )}
         </table>
       </div>
-      <Pagination
-        currentPage={data?.currentPage ?? 1}
-        totalPages={data?.totalPages ?? 1}
-        setPage={setPage}
-      />
+      <div className="flex justify-end mt-4">
+        <Pagination
+          currentPage={data?.currentPage ?? 1}
+          totalPages={data?.totalPages ?? 1}
+          setPage={setPage}
+        />
+      </div>
     </Layout>
   );
 }

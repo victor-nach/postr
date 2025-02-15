@@ -25,7 +25,6 @@ export interface ApiResponseList {
   data: UserProp[];
 }
 
-// Define a post data structure
 export interface PostProp {
   id: string;
   userId: string;
@@ -34,7 +33,6 @@ export interface PostProp {
   createdAt: string;
 }
 
-// Define the ApiResponse structure for posts (without pagination)
 export interface ApiResponse<T> {
   status: string;
   message: string;
