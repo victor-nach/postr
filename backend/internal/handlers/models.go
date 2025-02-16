@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/victor-nach/postr-backend/internal/domain"
 )
 
@@ -42,7 +41,7 @@ func (r listUsersRequest) Validate() error {
 
 func (r createPostRequest) Validate() error {
 	return validation.ValidateStruct(&r,
-		validation.Field(&r.UserID, validation.Required, is.UUID),
+		validation.Field(&r.UserID, validation.Required, validation.By(isCompactUUID)),
 		validation.Field(&r.Title, validation.Required, validation.Length(1, 255)),
 		validation.Field(&r.Body, validation.Required, validation.Length(1, 2000)),
 	)

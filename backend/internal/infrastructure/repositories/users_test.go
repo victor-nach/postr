@@ -3,7 +3,6 @@ package repositories
 import (
 	"fmt"
 	"testing"
-	"time"
 
 	"gorm.io/gorm"
 
@@ -14,66 +13,38 @@ import (
 	"github.com/victor-nach/postr-backend/internal/domain"
 )
 
-
-func TestUserRepository_Create(t *testing.T) {
-	cleanUsers(t)
-
-	user := domain.User{
-		ID:        uuid.NewString(),
-		Firstname: "Test",
-		Lastname:  "User",
-		Email:     "test@example.com",
-		Street:    "123 Test St",
-		City:      "Testville",
-		State:     "TS",
-		Zipcode:   "12345",
-		CreatedAt: time.Now(),
-	}
-
-	err := usersrepo.Create(testCtx, &user)
-	require.NoError(t, err)
-
-	var found domain.User
-	err = db.WithContext(testCtx).First(&found, "id = ?", user.ID).Error
-	require.NoError(t, err)
-	assert.Equal(t, user.Firstname, found.Firstname)
-	assert.Equal(t, user.Lastname, found.Lastname)
-	assert.Equal(t, user.Email, found.Email)
-	assert.Equal(t, user.Street, found.Street)
-	assert.Equal(t, user.City, found.City)
-	assert.Equal(t, user.State, found.State)
-	assert.Equal(t, user.Zipcode, found.Zipcode)
-}
-
 func TestUserRepository_Get(t *testing.T) {
 	cleanUsers(t)
 
 	user := domain.User{
-		ID:        uuid.NewString(),
-		Firstname: "Get",
-		Lastname:  "Test",
-		Email:     "get@example.com",
-		Street:    "456 Get St",
-		City:      "Getville",
-		State:     "GT",
-		Zipcode:   "67890",
-		CreatedAt: time.Now(),
+		ID:       uuid.NewString(),
+		Name:     "Get Test User",
+		Username: "gettestuser",
+		Email:    "get@example.com",
+		Phone:    "9876543210",
+		Address: domain.Address{
+			ID:      uuid.NewString(),
+			Street:  "456 Get St",
+			City:    "Getville",
+			State:   "GT",
+			Zipcode: "67890",
+		},
 	}
 	err := usersrepo.Create(testCtx, &user)
 	require.NoError(t, err)
 
-	// Retrieve the user by ID
 	retrieved, err := usersrepo.Get(testCtx, user.ID)
 	require.NoError(t, err)
-	assert.Equal(t, user.Firstname, retrieved.Firstname)
-	assert.Equal(t, user.Lastname, retrieved.Lastname)
+	assert.Equal(t, user.Name, retrieved.Name)
+	assert.Equal(t, user.Username, retrieved.Username)
 	assert.Equal(t, user.Email, retrieved.Email)
-	assert.Equal(t, user.Street, retrieved.Street)
-	assert.Equal(t, user.City, retrieved.City)
-	assert.Equal(t, user.State, retrieved.State)
-	assert.Equal(t, user.Zipcode, retrieved.Zipcode)
+	assert.Equal(t, user.Phone, retrieved.Phone)
+	require.NotNil(t, retrieved.Address)
+	assert.Equal(t, user.Address.Street, retrieved.Address.Street)
+	assert.Equal(t, user.Address.City, retrieved.Address.City)
+	assert.Equal(t, user.Address.State, retrieved.Address.State)
+	assert.Equal(t, user.Address.Zipcode, retrieved.Address.Zipcode)
 
-	// Non-existent user
 	_, err = usersrepo.Get(testCtx, "non-existent-id")
 	assert.Error(t, err)
 	assert.Equal(t, gorm.ErrRecordNotFound, err)
@@ -88,18 +59,18 @@ func TestUserRepository_Count(t *testing.T) {
 
 	users := []domain.User{
 		{
-			ID:        uuid.NewString(),
-			Firstname: "User",
-			Lastname:  "One",
-			Email:     "user1@example.com",
-			CreatedAt: time.Now(),
+			ID:       uuid.NewString(),
+			Name:     "User One",
+			Username: "userone",
+			Email:    "user1@example.com",
+			Phone:    "1111111111",
 		},
 		{
-			ID:        uuid.NewString(),
-			Firstname: "User",
-			Lastname:  "Two",
-			Email:     "user2@example.com",
-			CreatedAt: time.Now(),
+			ID:       uuid.NewString(),
+			Name:     "User Two",
+			Username: "usertwo",
+			Email:    "user2@example.com",
+			Phone:    "2222222222",
 		},
 	}
 	err = db.WithContext(testCtx).Create(&users).Error
@@ -116,17 +87,16 @@ func TestUserRepository_List(t *testing.T) {
 	var users []domain.User
 	for i := 1; i <= 5; i++ {
 		users = append(users, domain.User{
-			ID:        uuid.NewString(),
-			Firstname: fmt.Sprintf("User%d", i),
-			Lastname:  "Test",
-			Email:     fmt.Sprintf("user%d@example.com", i),
-			CreatedAt: time.Now(),
+			ID:       uuid.NewString(),
+			Name:     fmt.Sprintf("User %d", i),
+			Username: fmt.Sprintf("user%d", i),
+			Email:    fmt.Sprintf("user%d@example.com", i),
+			Phone:    fmt.Sprintf("12345678%02d", i),
 		})
 	}
 	err := db.WithContext(testCtx).Create(&users).Error
 	require.NoError(t, err)
 
-	// List page 1 with page size 2
 	paginated, err := usersrepo.List(testCtx, 1, 2)
 	require.NoError(t, err)
 	assert.Equal(t, 1, paginated.Pagination.CurrentPage)
@@ -134,7 +104,6 @@ func TestUserRepository_List(t *testing.T) {
 	assert.Equal(t, 5, paginated.Pagination.TotalSize)
 	assert.Len(t, paginated.Users, 2)
 
-	// List page 2
 	paginated, err = usersrepo.List(testCtx, 2, 2)
 	require.NoError(t, err)
 	assert.Equal(t, 2, paginated.Pagination.CurrentPage)
@@ -145,20 +114,20 @@ func TestUserRepository_Validate(t *testing.T) {
 	cleanUsers(t)
 
 	user := domain.User{
-		ID:        uuid.NewString(),
-		Firstname: "Validate",
-		Lastname:  "User",
-		Email:     "validate@example.com",
-		CreatedAt: time.Now(),
+		ID:       uuid.NewString(),
+		Name:     "Validate User",
+		Username: "validateuser",
+		Email:    "validate@example.com",
+		Phone:    "0000000000",
 	}
 	err := usersrepo.Create(testCtx, &user)
 	require.NoError(t, err)
 
-	// Validate an existing user
+	// Validate an existing user.
 	err = usersrepo.Validate(testCtx, user.ID)
 	require.NoError(t, err)
 
-	// Validate a non-existent user
+	// Validate a non-existent user.
 	err = usersrepo.Validate(testCtx, "non-existent-id")
 	assert.Error(t, err)
 	assert.Equal(t, domain.ErrUserNotFound, err)

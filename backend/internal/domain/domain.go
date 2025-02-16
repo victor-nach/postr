@@ -6,7 +6,6 @@ import (
 
 //go:generate mockgen -destination=./mocks/user_mock.go -package=mocks github.com/victor-nach/postr-backend/internal/domain UserService
 type UserService interface {
-	Create(ctx context.Context, user *User) error
 	Get(ctx context.Context, id string) (*User, error)
 	List(ctx context.Context, pageNumber int, pageSize int) (PaginatedUsers, error)
 	Count(ctx context.Context) (int, error)

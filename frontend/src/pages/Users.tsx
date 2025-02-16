@@ -72,13 +72,13 @@ function Users() {
                   onClick={() => handlePostClick(user.id)}
                 >
                   <td className="px-6 py-[26px] w-[124px] max-w-[124px] md:w-[200px] md:max-w-[200px] truncate text-[14px] font-medium">
-                    {user.firstname} {user.lastname}
+                    {user.name}
                   </td>
                   <td className="px-6 py-[26px] w-[124px] max-w-[124px] md:w-[264px] md:max-w-[264px] truncate text-[14px] font-normal">
                     {user.email}
                   </td>
                   <td className="px-6 py-[26px] w-[392px] max-w-[392px] truncate text-[14px] font-normal">
-                    {user.street}, {user.state}, {user.city}, {user.zipcode}
+                    {user.address.street}, {user.address.state}, {user.address.city}, {user.address.zipcode}
                   </td>
                 </tr>
               ))}

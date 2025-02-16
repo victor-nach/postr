@@ -39,7 +39,7 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Failed to initialize GORM: %v", err)
 	}
 
-	if err := db.AutoMigrate(&domain.User{}, &domain.Post{}); err != nil {
+	if err := db.AutoMigrate(&domain.User{}, &domain.Post{}, domain.Address{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
@@ -58,7 +58,7 @@ func TestPostRepository_Create(t *testing.T) {
 		UserID:    uuid.NewString(),
 		Title:     "Test Title",
 		Body:      "Test Content body",
-		CreatedAt: time.Now(),
+		CreatedAt: time.Now().String(),
 	}
 
 	err := postsrepo.Create(testCtx, &post)
@@ -74,8 +74,8 @@ func TestPostRepository_Create(t *testing.T) {
 
 func TestPostRepository_ListByUserID(t *testing.T) {
 	posts := []domain.Post{
-		{ID: uuid.NewString(), UserID: uuid.NewString(), Title: "Post 1", Body: "Body 1", CreatedAt: time.Now()},
-		{ID: uuid.NewString(), UserID: uuid.NewString(), Title: "Post 2", Body: "Body 2", CreatedAt: time.Now()},
+		{ID: uuid.NewString(), UserID: uuid.NewString(), Title: "Post 1", Body: "Body 1", CreatedAt: time.Now().String()},
+		{ID: uuid.NewString(), UserID: uuid.NewString(), Title: "Post 2", Body: "Body 2", CreatedAt: time.Now().String()},
 	}
 	require.NoError(t, db.WithContext(testCtx).Create(&posts).Error)
 
@@ -92,7 +92,7 @@ func TestPostRepository_Delete(t *testing.T) {
 		UserID:    uuid.NewString(),
 		Title:     "To Delete",
 		Body:      "Body",
-		CreatedAt: time.Now(),
+		CreatedAt: time.Now().String(),
 	}
 	require.NoError(t, db.WithContext(testCtx).Create(&post).Error)
 

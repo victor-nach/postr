@@ -3,10 +3,10 @@ package handlers
 import (
 	"strconv"
 	"strings"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"go.uber.org/zap"
 
 	"github.com/microcosm-cc/bluemonday"
@@ -17,6 +17,19 @@ import (
 func sanitizeInput(input string) string {
 	p := bluemonday.StrictPolicy()
 	return p.Sanitize(input)
+}
+
+var compactUUIDRegex = regexp.MustCompile(`^[0-9a-fA-F]{32}$`)
+
+func isCompactUUID(value interface{}) error {
+	s, ok := value.(string)
+	if !ok {
+		return validation.NewError("validation_compact_uuid", "invalid UUID format")
+	}
+	if !compactUUIDRegex.MatchString(s) {
+		return validation.NewError("validation_compact_uuid", "invalid compact UUID format")
+	}
+	return nil
 }
 
 func (h *PostHandler) validateCreatePost(c *gin.Context) (*createPostRequest, error) {
@@ -55,7 +68,7 @@ func (h *PostHandler) validateListPostsByUserID(c *gin.Context) (string, error) 
 		
 	}
 
-	err := validation.Validate(userId, is.UUID)
+	err := validation.Validate(userId, validation.By(isCompactUUID))
     if err != nil {
         logr.Error("invalid userId format", zap.Error(err))
         return "", domain.ErrInvalidInputWithStr("invalid userId format")
@@ -69,7 +82,7 @@ func (h *PostHandler) validateDeletePost(c *gin.Context) (string, error) {
 
 	id := c.Param("id")
 	
-	err := validation.Validate(id, is.UUID)
+	err := validation.Validate(id, validation.By(isCompactUUID))
     if err != nil {
         logr.Error("invalid userId format", zap.Error(err))
         return "", domain.ErrInvalidInputWithStr("invalid userId format")
@@ -118,7 +131,7 @@ func (h *UserHandler) validateGetUserByID(c *gin.Context) (string, error) {
 
 	id := c.Param("id")
 	
-	err := validation.Validate(id, is.UUID)
+	err := validation.Validate(id, validation.By(isCompactUUID))
     if err != nil {
         logr.Error("invalid userId format", zap.Error(err))
         return "", domain.ErrInvalidInputWithStr("invalid userId format")

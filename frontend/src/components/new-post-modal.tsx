@@ -68,7 +68,7 @@ export default function Modal({
                 placeholder="Give your post a title"
                 maxLength={100}
                 onChange={(e) => setTitle(e.target.value)}
-                className="block border border-[#E2E8F0] rounded-[4px] pt-[10px] pr-[16px] pb-[10px] pl-[16px] mt-1 w-[631px] h-[40px] text-sm placeholder:text-sm"
+                className="block border border-[#E2E8F0] rounded-[4px] p-2 mt-1 w-full h-[40px] text-sm placeholder:text-sm focus:border-[#CBD5E1] focus:ring-1 focus:ring-[#CBD5E1] outline-none transition-colors"
               />
             </label>
           </div>
@@ -81,7 +81,7 @@ export default function Modal({
                 placeholder="Write something mind-blowing"
                 maxLength={500}
                 onChange={(e) => setBody(e.target.value)}
-                className="block border border-[#E2E8F0] rounded-[4px] pt-[10px] pr-[16px] pb-[10px] pl-[16px] mt-1 w-[631px] h-[179px] text-sm placeholder:text-sm focus:border-[#E2E8F0] focus:ring-0 outline-none resize-none"
+                className="block border border-[#E2E8F0] rounded-[4px] p-2 mt-1 w-full h-[179px] text-sm placeholder:text-sm focus:border-[#CBD5E1] focus:ring-1 focus:ring-[#CBD5E1] outline-none resize-none transition-colors"
               />
             </label>
           </div>
@@ -105,9 +105,8 @@ export default function Modal({
             <button
               type="submit"
               disabled={isPending}
-              className={`flex items-center justify-center gap-2 px-4 py-2 text-sm rounded-sm text-white ${
-                isPending ? "bg-gray-400" : "bg-[#334155]"
-              }`}
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-sm rounded-sm text-white ${isPending ? "bg-gray-400" : "bg-[#334155]"
+                }`}
             >
               <span>Publish</span>
               {isPending && (

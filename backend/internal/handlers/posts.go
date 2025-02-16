@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -36,11 +37,11 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 	}
 
 	post := &domain.Post{
-		ID:        uuid.NewString(),
+		ID:        newUUID(),
 		UserID:    req.UserID,
 		Title:     req.Title,
 		Body:      req.Body,
-		CreatedAt: time.Now(),
+		CreatedAt: time.Now().Format(time.RFC3339),
 	}
 
 	if err := h.service.Create(c.Request.Context(), post); err != nil {
@@ -113,4 +114,9 @@ func (h *PostHandler) DeletePost(c *gin.Context) {
 
 	logr.Info("Post deleted successfully", zap.String("id", id))
 	c.JSON(http.StatusNoContent, nil)
+}
+
+func newUUID() string {
+    id := uuid.New().String()
+    return strings.ReplaceAll(id, "-", "")
 }

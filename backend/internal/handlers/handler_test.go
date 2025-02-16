@@ -43,7 +43,6 @@ func TestPostHandler_CreatePost(t *testing.T) {
 			require.Equal(t, "Test Title", post.Title)
 			require.Equal(t, "Test Body", post.Body)
 			require.NotEmpty(t, post.ID)
-			require.False(t, post.CreatedAt.IsZero())
 			return nil
 		}).Times(1)
 
@@ -87,14 +86,14 @@ func TestPostHandler_ListPostsByUserID(t *testing.T) {
 			UserID:    "12345",
 			Title:     "Title 1",
 			Body:      "Body 1",
-			CreatedAt: time.Now(),
+			CreatedAt: time.Now().String(),
 		},
 		{
 			ID:        "post2",
 			UserID:    "12345",
 			Title:     "Title 2",
 			Body:      "Body 2",
-			CreatedAt: time.Now(),
+			CreatedAt: time.Now().String(),
 		},
 	}
 

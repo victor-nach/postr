@@ -3,7 +3,6 @@ package usersservice
 import (
 	"context"
 	"testing"
-	"time"
 
 	"github.com/google/uuid"
 	"go.uber.org/mock/gomock"
@@ -16,39 +15,6 @@ import (
 	"github.com/victor-nach/postr-backend/internal/services/usersservice/mocks"
 )
 
-func TestService_Create(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mocks.NewMockusersRepo(ctrl)
-	logger := zap.NewNop()
-	svc := New(mockRepo, logger)
-
-	ctx := context.Background()
-	user := &domain.User{
-		ID: uuid.NewString(),
-		Firstname: "Alice",
-		Lastname:  "Smith",
-		Email:     "alice@example.com",
-		CreatedAt: time.Now(),
-	}
-
-	mockRepo.
-		EXPECT().
-		Create(ctx, gomock.AssignableToTypeOf(&domain.User{})).
-		DoAndReturn(func(ctx context.Context, u *domain.User) error {
-			require.NotEmpty(t, u.ID, "ID should be set by the service")
-			require.False(t, u.CreatedAt.IsZero(), "CreatedAt should be set by the service")
-			require.Equal(t, "Alice", u.Firstname)
-			require.Equal(t, "Smith", u.Lastname)
-			require.Equal(t, "alice@example.com", u.Email)
-			return nil
-		})
-
-	err := svc.Create(ctx, user)
-	require.NoError(t, err)
-}
-
 func TestService_Get_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -60,11 +26,10 @@ func TestService_Get_Success(t *testing.T) {
 	ctx := context.Background()
 	userID := uuid.NewString()
 	expectedUser := &domain.User{
-		ID:        userID,
-		Firstname: "Bob",
-		Lastname:  "Jones",
-		Email:     "bob@example.com",
-		CreatedAt: time.Now(),
+		ID:       userID,
+		Name:     "Bob",
+		Username: "Jones",
+		Email:    "bob@example.com",
 	}
 
 	mockRepo.EXPECT().Get(ctx, userID).Return(expectedUser, nil)
@@ -113,10 +78,9 @@ func TestService_List(t *testing.T) {
 		Users: []domain.User{
 			{
 				ID:        uuid.NewString(),
-				Firstname: "Charlie",
-				Lastname:  "Brown",
+				Name: "Charlie",
+				Username:  "Brown",
 				Email:     "charlie@example.com",
-				CreatedAt: time.Now(),
 			},
 		},
 	}

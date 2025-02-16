@@ -98,7 +98,7 @@ function Post() {
                 <span className="cursor-pointer">Back to Users</span>
               </button>
               <h1 className="text-3xl font-medium text-black">
-                {user.data?.firstname} {user.data?.lastname}
+                {user.data?.name}
               </h1>
               <div className="text-sm">
                 <span>{user.data?.email}</span>

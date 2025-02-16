@@ -24,24 +24,10 @@ func New(repo usersRepo, logger *zap.Logger) domain.UserService {
 
 //go:generate mockgen -destination=./mocks/mock_repo.go -package=mocks github.com/victor-nach/postr-backend/internal/services/usersservice usersRepo
 type usersRepo interface {
-	Create(ctx context.Context, user *domain.User) error
 	Get(ctx context.Context, id string) (*domain.User, error)
 	List(ctx context.Context, pageNumber int, pageSize int) (domain.PaginatedUsers, error)
 	Count(ctx context.Context, ) (int, error)
 	Validate(ctx context.Context, userID string) error
-}
-
-func (h *service) Create(ctx context.Context, user *domain.User) error {
-	logr := h.logger.With(zap.String("method", "Create"))
-
-	if err := h.repo.Create(ctx, user); err != nil {
-		logr.Error("Error creating user", zap.Error(err))
-		return err
-	}
-
-	logr.Info("User created successfully", zap.Any("user", user))
-
-	return nil
 }
 
 func (h *service) Get(ctx context.Context, id string) (*domain.User, error) {

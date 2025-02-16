@@ -32,7 +32,7 @@ func TestService_Create(t *testing.T) {
 		ID:     uuid.NewString(),
 		UserID: uuid.NewString(),
 		Title: "Title 1",
-		CreatedAt: time.Now(),
+		CreatedAt: time.Now().String(),
 	}
 
 	mockUsersRepo.EXPECT().Validate(ctx, post.UserID).Return(nil)
@@ -60,13 +60,13 @@ func TestService_List_Success(t *testing.T) {
 			ID:        uuid.NewString(),
 			UserID:    userID,
 			Title:     "Post 1",
-			CreatedAt: time.Now(),
+			CreatedAt: time.Now().String(),
 		},
 		{
 			ID:        uuid.NewString(),
 			UserID:    userID,
 			Title:     "Post 2",
-			CreatedAt: time.Now(),
+			CreatedAt: time.Now().String(),
 		},
 	}
 
