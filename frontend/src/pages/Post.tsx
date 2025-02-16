@@ -39,11 +39,9 @@ function Post() {
     queryFn: () => fetchUser(userID ?? ""),
   });
 
-  // Retrieve the previous page from location.state (default to 1)
   const previousPage = (location.state as { page?: number })?.page || 1;
 
   const handleBackClick = () => {
-    // Navigate back to Users with the previous page in the query string.
     navigate(`/users?page=${previousPage}`);
   };
 

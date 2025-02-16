@@ -7,13 +7,11 @@ import LoadingEllipsis from "../components/loadingEllipsis";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 function Users() {
-  // Use search params to persist the current page in the URL
   const [searchParams, setSearchParams] = useSearchParams();
   const initialPage = Number(searchParams.get("page")) || 1;
   const [page, setPage] = useState<number>(initialPage);
   const navigate = useNavigate();
 
-  // Update the URL query parameter whenever 'page' changes
   useEffect(() => {
     setSearchParams({ page: page.toString() });
   }, [page, setSearchParams]);
@@ -25,7 +23,6 @@ function Users() {
   });
 
   const handlePostClick = (userID: string) => {
-    // Pass the current page in navigation state
     void navigate(`/users/${userID}/posts`, { state: { page } });
   };
 
