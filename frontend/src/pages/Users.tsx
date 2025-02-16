@@ -1,14 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import Pagination from "../components/pagination";
 import { fetchUsers } from "../services/api";
 import Layout from "../components/layout";
 import LoadingEllipsis from "../components/loadingEllipsis";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 function Users() {
-  const [page, setPage] = useState<number>(1);
+  // Use search params to persist the current page in the URL
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialPage = Number(searchParams.get("page")) || 1;
+  const [page, setPage] = useState<number>(initialPage);
   const navigate = useNavigate();
+
+  // Update the URL query parameter whenever 'page' changes
+  useEffect(() => {
+    setSearchParams({ page: page.toString() });
+  }, [page, setSearchParams]);
 
   const { isPending, isError, error, data } = useQuery({
     queryKey: ["users", page],
@@ -17,12 +25,13 @@ function Users() {
   });
 
   const handlePostClick = (userID: string) => {
-    void navigate(`/users/${userID}/posts`);
+    // Pass the current page in navigation state
+    void navigate(`/users/${userID}/posts`, { state: { page } });
   };
 
   return (
     <Layout title="Users">
-      <div className="border rounded-lg border-[#E9EAEB] w-full mx-auto px-4 my-[24px] overflow-x-auto">
+      <div className="border rounded-lg border-[#E9EAEB] w-full mx-auto my-[24px] overflow-x-auto">
         <table className="w-full">
           <thead className="text-left text-[#535862]">
             <tr>
@@ -82,7 +91,7 @@ function Users() {
       </div>
       <div className="flex justify-end mt-4">
         <Pagination
-          currentPage={data?.currentPage ?? 1}
+          currentPage={page}
           totalPages={data?.totalPages ?? 1}
           setPage={setPage}
         />

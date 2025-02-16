@@ -1,10 +1,9 @@
-import { useParams } from "react-router";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import PostCard from "../components/post-card";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchUser, fetchUserPosts, deletePost } from "../services/api";
 import CreateNewPostCard from "../components/create-newpost";
 import BackArrowIcon from "../assets/icons/arrow-left.svg";
-import { useNavigate } from "react-router";
 import LoadingEllipsis from "../components/loadingEllipsis";
 import { useState } from "react";
 import Modal from "../components/new-post-modal";
@@ -20,6 +19,7 @@ interface PostProps {
 
 function Post() {
   const { userID } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,8 +39,12 @@ function Post() {
     queryFn: () => fetchUser(userID ?? ""),
   });
 
+  // Retrieve the previous page from location.state (default to 1)
+  const previousPage = (location.state as { page?: number })?.page || 1;
+
   const handleBackClick = () => {
-    void navigate("/users");
+    // Navigate back to Users with the previous page in the query string.
+    navigate(`/users?page=${previousPage}`);
   };
 
   const deleteMutation = useMutation({
@@ -88,7 +92,11 @@ function Post() {
                 onClick={handleBackClick}
                 className="flex gap-1 items-center text-sm font-semibold"
               >
-                <img className="cursor-pointer" src={BackArrowIcon} alt="back" />
+                <img
+                  className="cursor-pointer"
+                  src={BackArrowIcon}
+                  alt="back"
+                />
                 <span className="cursor-pointer">Back to Users</span>
               </button>
               <h1 className="text-3xl font-medium text-black">
