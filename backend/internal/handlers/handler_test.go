@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 	"go.uber.org/zap"
@@ -28,7 +27,7 @@ func TestPostHandler_CreatePost(t *testing.T) {
 	logger := zap.NewNop()
 	handler := NewPostHandler(mockPostService, logger)
 
-	reqBody := `{"userId": "b63df572-9bd1-4a4f-9f0d-2a8155a81fde", "title": "Test Title", "body": "Test Body"}`
+	reqBody := `{"userId": "b63df5729bd14a4f9f0d2a8155a81fde", "title": "Test Title", "body": "Test Body"}`
 	req, err := http.NewRequest("POST", "/posts", strings.NewReader(reqBody))
 	require.NoError(t, err)
 	req.Header.Set("Content-Type", "application/json")
@@ -39,7 +38,7 @@ func TestPostHandler_CreatePost(t *testing.T) {
 
 	mockPostService.EXPECT().Create(gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, post *domain.Post) error {
-			require.Equal(t, "b63df572-9bd1-4a4f-9f0d-2a8155a81fde", post.UserID)
+			require.Equal(t, "b63df5729bd14a4f9f0d2a8155a81fde", post.UserID)
 			require.Equal(t, "Test Title", post.Title)
 			require.Equal(t, "Test Body", post.Body)
 			require.NotEmpty(t, post.ID)
@@ -58,7 +57,7 @@ func TestPostHandler_CreatePost(t *testing.T) {
 
 	data, ok := resp.Data.(map[string]interface{})
 	require.True(t, ok, "expected Data to be a map")
-	require.Equal(t, "b63df572-9bd1-4a4f-9f0d-2a8155a81fde", data["userId"])
+	require.Equal(t, "b63df5729bd14a4f9f0d2a8155a81fde", data["user_id"])
 	require.Equal(t, "Test Title", data["title"])
 	require.Equal(t, "Test Body", data["body"])
 }
@@ -71,7 +70,7 @@ func TestPostHandler_ListPostsByUserID(t *testing.T) {
 	logger := zap.NewNop()
 	handler := NewPostHandler(mockPostService, logger)
 
-	userId := uuid.NewString()
+	userId := newUUID()
 	req, err := http.NewRequest("GET", fmt.Sprintf("/posts?userId=%s", userId), nil)
 	require.NoError(t, err)
 
@@ -122,7 +121,7 @@ func TestPostHandler_DeletePost(t *testing.T) {
 	logger := zap.NewNop()
 	handler := NewPostHandler(mockPostService, logger)
 
-	postID := uuid.NewString()
+	postID := newUUID()
 
 	req, err := http.NewRequest("DELETE", "/posts/"+postID, nil)
 	require.NoError(t, err)
@@ -164,7 +163,7 @@ func TestUserHandler_ListUsers(t *testing.T) {
 			TotalPages:  1,
 		},
 		Users: []domain.User{
-			{ID: uuid.NewString()},
+			{ID: newUUID()},
 		},
 	}
 	mockUserService.EXPECT().List(gomock.Any(), 1, 10).Return(paginatedUsers, nil).Times(1)
@@ -191,7 +190,7 @@ func TestUserHandler_GetUserByID_Success(t *testing.T) {
 	logger := zap.NewNop()
 	handler := NewUserHandler(mockUserService, logger)
 
-	userID := uuid.NewString()
+	userID := newUUID()
 	req, err := http.NewRequest("GET", "/users/"+userID, nil)
 	require.NoError(t, err)
 	w := httptest.NewRecorder()
