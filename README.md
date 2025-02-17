@@ -32,6 +32,7 @@ The backend is a Go-based API that leverages **SQLite** as its primary data stor
 3. [Makefile Commands](#makefile-commands)
 4. [Database Migrations and Seeding](#database-migrations-and-seeding)
 5. [API Documentation](#api-documentation)
+
    - Entities
    - Endpoints
    - Errors
@@ -146,35 +147,53 @@ Before you begin, ensure you have the following installed on your system:
    ```
 
 2. **Install Dependencies:**
+
    ```bash
    npm install
    ```
 
 3. **Running the Application:**
- Start the development server by running:
-     ```bash
+   Start the development server by running:
+
+   ```bash
    npm run dev
+
    ```
-  The app will be available at http://localhost:5173.
+
+   The app will be available at http://localhost:5173.
+
+   ```
+
+   ```
 
 4. **Building for Production**
-To build the application for production, execute:
-     ```bash
+   To build the application for production, execute:
+
+   ```bash
    npm run build
+
    ```
 
+   ```
+
+   ```
 
 5. **To preview the production build locally:**
-     ```bash
+
+   ```bash
    npm run preview
    ```
 
 6. **Running Tests**
- To run the test suite using Vitest, use the following command:
-     ```bash
-    npm run test
-    ```
-   
+   To run the test suite using Vitest, use the following command:
+
+   ```bash
+   npm run test
+   ```
+
+   ```
+
+   ```
 
 ## 2. **Backend Installation and Setup**
 
@@ -252,22 +271,28 @@ You can run migrations and optionally seed the database manually:
 
 ### **User**
 
-| **Field**    | **Type**   | **Description**                       |
-| ------------ | ---------- | --------------------------------------|
-| `id`         | `string`   | Unique identifier for the user (UUID) |
-| `firstname`  | `string`   | User's first name                     |
-| `lastname`   | `string`   | User's last name                      |
-| `email`      | `string`   | User's email (must be unique)         |
-| `street`     | `string`   | User's street address                 |
-| `city`       | `string`   | City where the user resides           |
-| `state`      | `string`   | State where the user resides          |
-| `zipcode`    | `string`   | User's postal code                    |
-| `created_at` | `datetime` | Timestamp when the user was created   |
+| **Field**  | **Type** | **Description**                       |
+| ---------- | -------- | ------------------------------------- |
+| `id`       | `string` | Unique identifier for the user (UUID) |
+| `name`     | `string` | User's full name                      |
+| `username` | `string` | User's username                       |
+| `email`    | `string` | User's email (must be unique)         |
+
+### **Address**
+
+| **Field** | **Type** | **Description**                       |
+| --------- | -------- | ------------------------------------- |
+| `id`      | `string` | Unique identifier for the user (UUID) |
+| `user_id` | `string` | ID of the related user                |
+| `street`  | `string` | User's street address                 |
+| `city`    | `string` | City where the user resides           |
+| `state`   | `string` | State where the user resides          |
+| `zipcode` | `string` | User's postal code                    |
 
 ### **Post**
 
 | **Field**    | **Type**   | **Description**                       |
-| ------------ | ---------- | --------------------------------------|
+| ------------ | ---------- | ------------------------------------- |
 | `id`         | `string`   | Unique identifier for the post (UUID) |
 | `user_id`    | `string`   | ID of the user who created the post   |
 | `title`      | `string`   | Title of the post                     |
@@ -302,26 +327,34 @@ You can run migrations and optionally seed the database manually:
   },
   "data": [
     {
-      "id": "12296bff-6b03-42f1-a934-cf1995413d8c",
-      "firstname": "Michael",
-      "lastname": "Johnson",
-      "email": "Michael.Johnson.6@acme.corp",
-      "street": "15 Pine Ln.",
-      "city": "Chicago",
-      "state": "IL",
-      "zipcode": "60007",
-      "createdAt": "2025-02-09T23:28:04.3599836+01:00"
+      "id": "fece5b64b4204e55b2a6ef64b22647d5",
+      "name": "Mr. Nicola Lesch",
+      "username": "iEiTwIv",
+      "email": "tpkuxCP@oHaenVi.info",
+      "phone": "103-486-9712",
+      "address": {
+        "id": "e8fc6e94af034286b56e1d7b16799cdc",
+        "user_id": "fece5b64b4204e55b2a6ef64b22647d5",
+        "street": "620 Oakland Avenue",
+        "city": "Fayetteville",
+        "state": "AR",
+        "zipcode": "72701"
+      }
     },
     {
-      "id": "70fbdfcd-a513-4e92-9e0d-9c74dac01a72",
-      "firstname": "Emily",
-      "lastname": "Williams",
-      "email": "Emily.Williams.7@acme.corp",
-      "street": "20 Maple Dr.",
-      "city": "Houston",
-      "state": "TX",
-      "zipcode": "77001",
-      "createdAt": "2025-02-09T23:28:04.3599836+01:00"
+      "id": "fe3545e51919414293bac6fd6a1a63bd",
+      "name": "Prof. Jay O'Kon",
+      "username": "OsMkyuR",
+      "email": "TkSOnpL@CnxCqRq.com",
+      "phone": "732-681-9510",
+      "address": {
+        "id": "3693ca7f924d4b81bcd0f5a65196afed",
+        "user_id": "fe3545e51919414293bac6fd6a1a63bd",
+        "street": "1330 West 82nd Avenue",
+        "city": "Anchorage",
+        "state": "AK",
+        "zipcode": "99518"
+      }
     }
   ]
 }
@@ -342,15 +375,19 @@ You can run migrations and optionally seed the database manually:
   "status": "success",
   "message": "User retrieved successfully",
   "data": {
-    "id": "963de191-8278-40f0-a367-e2e45e724aad",
-    "firstname": "John",
-    "lastname": "Doe",
-    "email": "john@example.com",
-    "street": "123 Elm Street",
-    "city": "New York",
-    "state": "NY",
-    "zipcode": "10001",
-    "createdAt": "2025-02-09T17:15:06.6062919+01:00"
+    "id": "fe3545e51919414293bac6fd6a1a63bd",
+    "name": "Prof. Jay O'Kon",
+    "username": "OsMkyuR",
+    "email": "TkSOnpL@CnxCqRq.com",
+    "phone": "732-681-9510",
+    "address": {
+      "id": "3693ca7f924d4b81bcd0f5a65196afed",
+      "user_id": "fe3545e51919414293bac6fd6a1a63bd",
+      "street": "1330 West 82nd Avenue",
+      "city": "Anchorage",
+      "state": "AK",
+      "zipcode": "99518"
+    }
   }
 }
 ```
@@ -368,17 +405,9 @@ You can run migrations and optionally seed the database manually:
 ```json
 {
   "status": "success",
-  "message": "User retrieved successfully",
+  "message": "Users count retrieved successfully",
   "data": {
-    "id": "963de191-8278-40f0-a367-e2e45e724aad",
-    "firstname": "John",
-    "lastname": "Doe",
-    "email": "john@example.com",
-    "street": "123 Elm Street",
-    "city": "New York",
-    "state": "NY",
-    "zipcode": "10001",
-    "createdAt": "2025-02-09T17:15:06.6062919+01:00"
+    "count": 100
   }
 }
 ```
@@ -476,13 +505,14 @@ You can run migrations and optionally seed the database manually:
 
 ### **API Error Codes**
 
-| **Name**            | **Code**     | **Message**                                        | **Description**                                       |
-| ------------------- | ------------ | -------------------------------------------------- | ----------------------------------------------------- |
-| `ErrInternalServer` | `APP-500`    | `Internal server error - Unable to handle request` | A server error occurred while processing the request. |
-| `ErrInvalidInput`   | `APP-400`    | `Invalid input data`                               | The request body contains invalid or missing fields.  |
-| `ErrUserNotFound`   | `USR-404001` | `User not found`                                   | The specified user could not be found.                |
-| `ErrPostNotFound`   | `PST-404001` | `Post not found`                                   | The specified post could not be found.                |
-| `ErrCreateUser`     | `USR-400101` | `Failed to create user`                            | An error occurred while trying to create a user.      |
+| **Name**             | **Code**     | **Message**                                        | **Description**                                       |
+| -------------------- | ------------ | -------------------------------------------------- | ----------------------------------------------------- |
+| `ErrInternalServer`  | `APP-500`    | `Internal server error - Unable to handle request` | A server error occurred while processing the request. |
+| `ErrInvalidInput`    | `APP-400`    | `Invalid input data`                               | The request body contains invalid or missing fields.  |
+| `ErrUserNotFound`    | `USR-404001` | `User not found`                                   | The specified user could not be found.                |
+| `ErrPostNotFound`    | `PST-404001` | `Post not found`                                   | The specified post could not be found.                |
+| `ErrInvalidAPIKey`   | `USR-401002` | `Invalid API key`                                  | An invalid API key was provided                       |
+| `ErrTooManyRequests` | `USR-429001` | `Too many requests`                                | Rate limter error                                     |
 
 ---
 
